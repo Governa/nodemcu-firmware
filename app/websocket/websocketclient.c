@@ -257,6 +257,10 @@ static void ws_receiveCallback(void *arg, char *buf, unsigned short len) {
   os_timer_disarm(&ws->timeoutTimer); // reset ping check
   os_timer_arm(&ws->timeoutTimer, WS_PING_INTERVAL_MS, true);
 
+  if(len == 0){
+    NODE_DBG("len == 0");
+    return;
+  }
 
   char *b = buf;
   if (ws->frameBuffer != NULL) { // Append previous frameBuffer with new content
@@ -497,6 +501,10 @@ static void ws_initReceiveCallback(void *arg, char *buf, unsigned short len) {
   struct espconn *conn = (struct espconn *) arg;
   ws_info *ws = (ws_info *) conn->reverse;
 
+  if (len == 0){
+    NODE_DBG("len==0\n");
+    return;
+  }
   // Check server is switch protocols
   if (strstr(buf, WS_HTTP_SWITCH_PROTOCOL_HEADER) == NULL) {
       NODE_DBG("Server is not switching protocols\n");
